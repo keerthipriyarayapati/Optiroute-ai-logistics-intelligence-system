@@ -65,3 +65,14 @@ def predict_delay(data: DeliveryInput):
         "delivery_delay_prediction": int(prediction),
         "delay_probability": float(probability)
     }
+
+@app.get("/risk-analytics")
+def risk_analytics():
+
+    return {
+        "high_risk_routes": 18,
+        "medium_risk_routes": 42,
+        "low_risk_routes": 76,
+        "average_delay_probability": 0.27,
+        "system_status": "Operational"
+    }

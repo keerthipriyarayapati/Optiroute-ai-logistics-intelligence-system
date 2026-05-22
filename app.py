@@ -25,11 +25,88 @@ Features:
 )
 
 # Home route
-@app.get("/")
+from fastapi.responses import HTMLResponse
+
+@app.get("/", response_class=HTMLResponse)
 def home():
-    return {
-        "message": "OptiRoute Logistics API Running Successfully"
-    }
+
+    return """
+    <html>
+        <head>
+            <title>OptiRoute AI Logistics Intelligence</title>
+
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    background-color: #0f172a;
+                    color: white;
+                    text-align: center;
+                    padding-top: 80px;
+                }
+
+                h1 {
+                    font-size: 48px;
+                    color: #38bdf8;
+                }
+
+                p {
+                    font-size: 20px;
+                    width: 70%;
+                    margin: auto;
+                    line-height: 1.6;
+                }
+
+                .button {
+                    display: inline-block;
+                    margin-top: 30px;
+                    padding: 15px 30px;
+                    font-size: 18px;
+                    color: white;
+                    background-color: #2563eb;
+                    text-decoration: none;
+                    border-radius: 10px;
+                    margin-right: 10px;
+                }
+
+                .button:hover {
+                    background-color: #1d4ed8;
+                }
+
+                .features {
+                    margin-top: 40px;
+                    font-size: 18px;
+                }
+            </style>
+        </head>
+
+        <body>
+
+            <h1>🚚 OptiRoute AI Logistics Intelligence</h1>
+
+            <p>
+                AI-Driven Last-Mile Logistics Intelligence System
+                powered by Machine Learning, Risk Analytics,
+                and Route Optimization.
+            </p>
+
+            <div class="features">
+                ✅ Delivery Delay Prediction <br><br>
+                ✅ Risk-Aware Analytics <br><br>
+                ✅ Route Optimization <br><br>
+                ✅ FastAPI Cloud Deployment
+            </div>
+
+            <a class="button" href="/docs">
+                Open API Docs
+            </a>
+
+            <a class="button" href="/risk-analytics">
+                View Risk Analytics
+            </a>
+
+        </body>
+    </html>
+    """
 
 # Input schema
 class DeliveryInput(BaseModel):

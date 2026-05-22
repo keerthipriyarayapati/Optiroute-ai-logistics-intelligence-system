@@ -7,7 +7,22 @@ import numpy as np
 model = joblib.load("model.pkl")
 
 # Initialize FastAPI app
-app = FastAPI()
+app = FastAPI(
+    title="OptiRoute AI Logistics Intelligence API",
+    description="""
+🚚 AI-Driven Last-Mile Logistics Intelligence System
+
+Features:
+- Delivery Delay Prediction
+- Risk-Aware Analytics
+- Route Optimization
+- Logistics Intelligence API
+""",
+    version="1.0.0",
+    swagger_ui_parameters={
+        "syntaxHighlight.theme": "obsidian"
+    }
+)
 
 # Home route
 @app.get("/")

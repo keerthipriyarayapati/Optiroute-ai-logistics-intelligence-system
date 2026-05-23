@@ -166,19 +166,19 @@ def home():
 
         <div class="cards">
 
-            <div class="card">
-                <h2>98%</h2>
-                <p>Prediction Accuracy</p>
+            <div class="card" style="border-top: 5px solid #ef4444;">
+                <h2>18</h2>
+                <p>High Risk Routes</p>
             </div>
 
-            <div class="card">
-                <h2>136</h2>
-                <p>Optimized Routes</p>
+            <div class="card" style="border-top: 5px solid #f59e0b;">
+                <h2>42</h2>
+                <p>Medium Risk Routes</p>
             </div>
 
-            <div class="card">
-                <h2>24/7</h2>
-                <p>Cloud API Availability</p>
+            <div class="card" style="border-top: 5px solid #22c55e;">
+                <h2>76</h2>
+                <p>Low Risk Routes</p>
             </div>
 
         </div>

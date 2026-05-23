@@ -1,130 +1,106 @@
-from fastapi import FastAPI
-from pydantic import BaseModel
+from fastapi import FastAPI, Form
+from fastapi.responses import HTMLResponse
 import joblib
 import numpy as np
 
 # Load trained model
 model = joblib.load("model.pkl")
 
-# Initialize FastAPI app
+# Initialize app
 app = FastAPI(
     title="OptiRoute AI Logistics Intelligence API",
-    description="""
-🚚 AI-Driven Last-Mile Logistics Intelligence System
-
-Features:
-- Delivery Delay Prediction
-- Risk-Aware Analytics
-- Route Optimization
-- Logistics Intelligence API
-""",
-    version="1.0.1",
-    swagger_ui_parameters={
-        "syntaxHighlight.theme": "obsidian"
-    }
+    description="AI-Driven Last-Mile Logistics Intelligence System",
+    version="2.0.0"
 )
 
-# Home route
-from fastapi.responses import HTMLResponse
-
+# HOME PAGE
 @app.get("/", response_class=HTMLResponse)
 def home():
 
     return """
-    <!DOCTYPE html>
-
     <html>
 
     <head>
-
-        <title>OptiRoute AI Logistics Intelligence</title>
+        <title>OptiRoute AI</title>
 
         <style>
 
-            body {
-                margin: 0;
-                font-family: Arial, sans-serif;
-                background-color: #0f172a;
-                color: white;
+            body{
+                margin:0;
+                padding:0;
+                font-family:Arial;
+                background:#071133;
+                color:white;
+                text-align:center;
             }
 
-            .navbar {
-                background-color: #111827;
-                padding: 20px 50px;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
+            .hero{
+                padding-top:100px;
             }
 
-            .logo {
-                font-size: 28px;
-                font-weight: bold;
-                color: #38bdf8;
+            h1{
+                font-size:60px;
+                margin-bottom:20px;
             }
 
-            .hero {
-                text-align: center;
-                padding: 100px 20px;
+            p{
+                font-size:22px;
+                color:#d1d5db;
             }
 
-            .hero h1 {
-                font-size: 60px;
-                margin-bottom: 20px;
+            .form-box{
+                margin-top:50px;
             }
 
-            .hero p {
-                font-size: 22px;
-                color: #cbd5e1;
-                width: 70%;
-                margin: auto;
-                line-height: 1.6;
+            input{
+                width:220px;
+                padding:15px;
+                margin:10px;
+                border:none;
+                border-radius:10px;
+                font-size:16px;
             }
 
-            .buttons {
-                margin-top: 40px;
+            button{
+                padding:15px 40px;
+                border:none;
+                border-radius:10px;
+                background:#2563eb;
+                color:white;
+                font-size:18px;
+                cursor:pointer;
+                margin-top:20px;
             }
 
-            .btn {
-                text-decoration: none;
-                background-color: #2563eb;
-                color: white;
-                padding: 15px 30px;
-                margin: 10px;
-                border-radius: 10px;
-                font-size: 18px;
-                display: inline-block;
+            button:hover{
+                background:#1d4ed8;
             }
 
-            .btn:hover {
-                background-color: #1d4ed8;
+            .cards{
+                display:flex;
+                justify-content:center;
+                gap:30px;
+                margin-top:100px;
+                flex-wrap:wrap;
             }
 
-            .cards {
-                display: flex;
-                justify-content: center;
-                gap: 30px;
-                padding: 50px;
-                flex-wrap: wrap;
+            .card{
+                width:250px;
+                background:#172554;
+                padding:40px;
+                border-radius:20px;
+                box-shadow:0px 4px 20px rgba(0,0,0,0.3);
             }
 
-            .card {
-                background-color: #1e293b;
-                padding: 30px;
-                width: 250px;
-                border-radius: 15px;
-                text-align: center;
-                box-shadow: 0px 0px 15px rgba(0,0,0,0.3);
+            .card h2{
+                font-size:45px;
+                color:#38bdf8;
             }
 
-            .card h2 {
-                color: #38bdf8;
-                font-size: 40px;
-            }
-
-            .footer {
-                text-align: center;
-                padding: 30px;
-                color: #94a3b8;
+            .footer{
+                margin-top:100px;
+                padding-bottom:40px;
+                color:#94a3b8;
             }
 
         </style>
@@ -133,92 +109,59 @@ def home():
 
     <body>
 
-        <div class="navbar">
-
-            <div class="logo">
-                🚚 OptiRoute AI
-            </div>
-
-        </div>
-
         <div class="hero">
 
-            <h1>AI-Driven Last-Mile Logistics Intelligence</h1>
+            <h1>🚚 OptiRoute AI</h1>
 
             <p>
-                Advanced Machine Learning platform for delivery delay prediction,
-                logistics analytics, and intelligent route risk assessment.
+                AI-Driven Last-Mile Logistics Intelligence System
             </p>
 
-            <div style="margin-top:50px;">
+            <div class="form-box">
 
-    <form action="/predict-delay" method="post">
+                <form action="/predict-delay" method="post">
 
-        <input type="number" name="price" placeholder="Product Price"
-        style="padding:12px; width:220px; margin:10px; border-radius:8px; border:none;">
+                    <input type="number" step="any" name="price"
+                    placeholder="Product Price" required>
 
-        <input type="number" name="freight_value" placeholder="Freight Value"
-        style="padding:12px; width:220px; margin:10px; border-radius:8px; border:none;">
+                    <input type="number" step="any" name="freight_value"
+                    placeholder="Freight Value" required>
 
-        <input type="number" name="delivery_time_days" placeholder="Delivery Time Days"
-        style="padding:12px; width:220px; margin:10px; border-radius:8px; border:none;">
+                    <input type="number" step="any" name="delivery_time_days"
+                    placeholder="Delivery Time Days" required>
 
-        <br>
+                    <br>
 
-        <button type="submit"
-        style="
-            margin-top:20px;
-            padding:15px 35px;
-            border:none;
-            border-radius:10px;
-            background-color:#2563eb;
-            color:white;
-            font-size:18px;
-            cursor:pointer;
-        ">
-            Predict Delivery Risk
-        </button>
+                    <button type="submit">
+                        Predict Delivery Risk
+                    </button>
 
-    </form>
-
-</div>
-
-            <div class="buttons">
-
-                <a class="btn" href="/docs">
-                    Open API Docs
-                </a>
-
-                <a class="btn" href="/risk-analytics">
-                    Risk Analytics
-                </a>
+                </form>
 
             </div>
 
-        </div>
+            <div class="cards">
 
-        <div class="cards">
+                <div class="card" style="border-top:5px solid #ef4444;">
+                    <h2>ML</h2>
+                    <p>Prediction Engine</p>
+                </div>
 
-            <div class="card" style="border-top: 5px solid #ef4444;">
-                <h2>18</h2>
-                <p>High Risk Routes</p>
+                <div class="card" style="border-top:5px solid #f59e0b;">
+                    <h2>AI</h2>
+                    <p>Risk Analytics</p>
+                </div>
+
+                <div class="card" style="border-top:5px solid #22c55e;">
+                    <h2>API</h2>
+                    <p>Cloud Deployment</p>
+                </div>
+
             </div>
 
-            <div class="card" style="border-top: 5px solid #f59e0b;">
-                <h2>42</h2>
-                <p>Medium Risk Routes</p>
+            <div class="footer">
+                OptiRoute AI Logistics Intelligence System © 2026
             </div>
-
-            <div class="card" style="border-top: 5px solid #22c55e;">
-                <h2>76</h2>
-                <p>Low Risk Routes</p>
-            </div>
-
-        </div>
-
-        <div class="footer">
-
-            OptiRoute AI Logistics Intelligence System © 2026
 
         </div>
 
@@ -227,41 +170,135 @@ def home():
     </html>
     """
 
-# Input schema
-class DeliveryInput(BaseModel):
-    price: float
-    freight_value: float
-    purchase_hour: int
-    purchase_day: int
-    purchase_month: int
-    purchase_weekday: int
-    is_weekend: int
-    delivery_time_days: float
+# PREDICTION PAGE
+@app.post("/predict-delay", response_class=HTMLResponse)
+def predict_delay(
 
-# Prediction endpoint
-@app.post("/predict-delay")
-def predict_delay(data: DeliveryInput):
+    price: float = Form(...),
+    freight_value: float = Form(...),
+    delivery_time_days: float = Form(...)
+
+):
+
+    # Dummy values for remaining features
+    purchase_hour = 12
+    purchase_day = 15
+    purchase_month = 7
+    purchase_weekday = 2
+    is_weekend = 0
 
     features = np.array([[
-        data.price,
-        data.freight_value,
-        data.purchase_hour,
-        data.purchase_day,
-        data.purchase_month,
-        data.purchase_weekday,
-        data.is_weekend,
-        data.delivery_time_days
+        price,
+        freight_value,
+        purchase_hour,
+        purchase_day,
+        purchase_month,
+        purchase_weekday,
+        is_weekend,
+        delivery_time_days
     ]])
 
-    prediction = model.predict(features)[0]
+    prediction = int(model.predict(features)[0])
 
-    probability = model.predict_proba(features)[0][1]
+    probability = float(model.predict_proba(features)[0][1])
 
-    return {
-        "delivery_delay_prediction": int(prediction),
-        "delay_probability": float(probability)
-    }
+    # Risk label
+    if probability > 0.7:
+        risk = "HIGH RISK"
+        color = "#ef4444"
 
+    elif probability > 0.4:
+        risk = "MEDIUM RISK"
+        color = "#f59e0b"
+
+    else:
+        risk = "LOW RISK"
+        color = "#22c55e"
+
+    return f"""
+
+    <html>
+
+    <head>
+
+        <title>Prediction Result</title>
+
+        <style>
+
+            body{{
+                font-family:Arial;
+                background:#071133;
+                color:white;
+                text-align:center;
+                padding-top:100px;
+            }}
+
+            .card{{
+                width:500px;
+                margin:auto;
+                background:#172554;
+                padding:50px;
+                border-radius:20px;
+                border-top:10px solid {color};
+            }}
+
+            h1{{
+                font-size:50px;
+            }}
+
+            h2{{
+                font-size:40px;
+                color:{color};
+            }}
+
+            p{{
+                font-size:24px;
+            }}
+
+            a{{
+                display:inline-block;
+                margin-top:30px;
+                padding:15px 30px;
+                background:#2563eb;
+                color:white;
+                text-decoration:none;
+                border-radius:10px;
+            }}
+
+        </style>
+
+    </head>
+
+    <body>
+
+        <div class="card">
+
+            <h1>Prediction Result</h1>
+
+            <h2>{risk}</h2>
+
+            <p>
+                Delay Prediction:
+                <b>{prediction}</b>
+            </p>
+
+            <p>
+                Delay Probability:
+                <b>{round(probability * 100, 2)}%</b>
+            </p>
+
+            <a href="/">
+                Back to Home
+            </a>
+
+        </div>
+
+    </body>
+
+    </html>
+    """
+
+# RISK ANALYTICS API
 @app.get("/risk-analytics")
 def risk_analytics():
 

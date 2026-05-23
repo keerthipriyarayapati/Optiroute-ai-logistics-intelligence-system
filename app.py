@@ -3,24 +3,29 @@ from fastapi.responses import HTMLResponse
 import joblib
 import numpy as np
 
-# Load trained model
+# Load trained ML model
 model = joblib.load("model.pkl")
 
-# Initialize app
+# Initialize FastAPI app
 app = FastAPI(
     title="OptiRoute AI Logistics Intelligence API",
     description="AI-Driven Last-Mile Logistics Intelligence System",
     version="2.0.0"
 )
 
+# ==============================
 # HOME PAGE
+# ==============================
+
 @app.get("/", response_class=HTMLResponse)
 def home():
 
     return """
+
     <html>
 
     <head>
+
         <title>OptiRoute AI</title>
 
         <style>
@@ -35,16 +40,16 @@ def home():
             }
 
             .hero{
-                padding-top:100px;
+                padding-top:70px;
             }
 
             h1{
-                font-size:60px;
+                font-size:72px;
                 margin-bottom:20px;
             }
 
             p{
-                font-size:22px;
+                font-size:24px;
                 color:#d1d5db;
             }
 
@@ -76,6 +81,25 @@ def home():
                 background:#1d4ed8;
             }
 
+            .links{
+                margin-top:30px;
+            }
+
+            .link-btn{
+                display:inline-block;
+                padding:15px 30px;
+                background:#0ea5e9;
+                color:white;
+                text-decoration:none;
+                border-radius:10px;
+                margin:10px;
+                font-size:18px;
+            }
+
+            .analytics-btn{
+                background:#22c55e;
+            }
+
             .cards{
                 display:flex;
                 justify-content:center;
@@ -85,22 +109,28 @@ def home():
             }
 
             .card{
-                width:250px;
+                width:260px;
                 background:#172554;
-                padding:40px;
+                padding:50px;
                 border-radius:20px;
                 box-shadow:0px 4px 20px rgba(0,0,0,0.3);
             }
 
             .card h2{
-                font-size:45px;
+                font-size:55px;
                 color:#38bdf8;
+            }
+
+            .card p{
+                font-size:28px;
+                color:white;
             }
 
             .footer{
                 margin-top:100px;
                 padding-bottom:40px;
                 color:#94a3b8;
+                font-size:18px;
             }
 
         </style>
@@ -121,14 +151,26 @@ def home():
 
                 <form action="/predict-delay" method="post">
 
-                    <input type="number" step="any" name="price"
-                    placeholder="Product Price" required>
+                    <input
+                    type="number"
+                    step="any"
+                    name="price"
+                    placeholder="Product Price"
+                    required>
 
-                    <input type="number" step="any" name="freight_value"
-                    placeholder="Freight Value" required>
+                    <input
+                    type="number"
+                    step="any"
+                    name="freight_value"
+                    placeholder="Freight Value"
+                    required>
 
-                    <input type="number" step="any" name="delivery_time_days"
-                    placeholder="Delivery Time Days" required>
+                    <input
+                    type="number"
+                    step="any"
+                    name="delivery_time_days"
+                    placeholder="Delivery Time Days"
+                    required>
 
                     <br>
 
@@ -137,6 +179,18 @@ def home():
                     </button>
 
                 </form>
+
+            </div>
+
+            <div class="links">
+
+                <a class="link-btn" href="/docs">
+                    Open API Docs
+                </a>
+
+                <a class="link-btn analytics-btn" href="/risk-analytics">
+                    Risk Analytics API
+                </a>
 
             </div>
 
@@ -168,9 +222,13 @@ def home():
     </body>
 
     </html>
+
     """
 
-# PREDICTION PAGE
+# ==============================
+# PREDICTION RESULT PAGE
+# ==============================
+
 @app.post("/predict-delay", response_class=HTMLResponse)
 def predict_delay(
 
@@ -180,13 +238,14 @@ def predict_delay(
 
 ):
 
-    # Dummy values for remaining features
+    # Dummy feature values
     purchase_hour = 12
     purchase_day = 15
     purchase_month = 7
     purchase_weekday = 2
     is_weekend = 0
 
+    # Feature array
     features = np.array([[
         price,
         freight_value,
@@ -198,11 +257,12 @@ def predict_delay(
         delivery_time_days
     ]])
 
+    # Prediction
     prediction = int(model.predict(features)[0])
 
     probability = float(model.predict_proba(features)[0][1])
 
-    # Risk label
+    # Risk category
     if probability > 0.7:
         risk = "HIGH RISK"
         color = "#ef4444"
@@ -263,6 +323,7 @@ def predict_delay(
                 color:white;
                 text-decoration:none;
                 border-radius:10px;
+                font-size:18px;
             }}
 
         </style>
@@ -278,7 +339,7 @@ def predict_delay(
             <h2>{risk}</h2>
 
             <p>
-                Delay Prediction:
+                Delivery Delay Prediction:
                 <b>{prediction}</b>
             </p>
 
@@ -296,9 +357,13 @@ def predict_delay(
     </body>
 
     </html>
+
     """
 
+# ==============================
 # RISK ANALYTICS API
+# ==============================
+
 @app.get("/risk-analytics")
 def risk_analytics():
 

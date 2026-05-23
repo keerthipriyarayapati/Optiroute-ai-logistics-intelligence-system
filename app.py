@@ -1,21 +1,39 @@
 from fastapi import FastAPI, Form
 from fastapi.responses import HTMLResponse
+from pydantic import BaseModel
 import joblib
 import numpy as np
 
-# Load trained ML model
+# =========================================
+# LOAD ML MODEL
+# =========================================
+
 model = joblib.load("model.pkl")
 
-# Initialize FastAPI app
+# =========================================
+# FASTAPI INITIALIZATION
+# =========================================
+
 app = FastAPI(
     title="OptiRoute AI Logistics Intelligence API",
-    description="AI-Driven Last-Mile Logistics Intelligence System",
-    version="2.0.0"
+    description="""
+🚚 AI-Driven Last-Mile Logistics Intelligence System
+
+Features:
+- Delivery Delay Prediction
+- Risk-Aware Analytics
+- Route Optimization
+- Logistics Intelligence API
+""",
+    version="3.0.0",
+    swagger_ui_parameters={
+        "syntaxHighlight.theme": "obsidian"
+    }
 )
 
-# ==============================
+# =========================================
 # HOME PAGE
-# ==============================
+# =========================================
 
 @app.get("/", response_class=HTMLResponse)
 def home():
@@ -149,7 +167,7 @@ def home():
 
             <div class="form-box">
 
-                <form action="/predict-delay" method="post">
+                <form action="/website-predict" method="post">
 
                     <input
                     type="number"
@@ -225,12 +243,54 @@ def home():
 
     """
 
-# ==============================
-# PREDICTION RESULT PAGE
-# ==============================
+# =========================================
+# API INPUT SCHEMA
+# =========================================
 
-@app.post("/predict-delay", response_class=HTMLResponse)
-def predict_delay(
+class DeliveryInput(BaseModel):
+
+    price: float
+    freight_value: float
+    purchase_hour: int
+    purchase_day: int
+    purchase_month: int
+    purchase_weekday: int
+    is_weekend: int
+    delivery_time_days: float
+
+# =========================================
+# MAIN API PREDICTION ENDPOINT
+# =========================================
+
+@app.post("/predict-delay")
+def predict_delay(data: DeliveryInput):
+
+    features = np.array([[
+        data.price,
+        data.freight_value,
+        data.purchase_hour,
+        data.purchase_day,
+        data.purchase_month,
+        data.purchase_weekday,
+        data.is_weekend,
+        data.delivery_time_days
+    ]])
+
+    prediction = int(model.predict(features)[0])
+
+    probability = float(model.predict_proba(features)[0][1])
+
+    return {
+        "delivery_delay_prediction": prediction,
+        "delay_probability": probability
+    }
+
+# =========================================
+# WEBSITE PREDICTION PAGE
+# =========================================
+
+@app.post("/website-predict", response_class=HTMLResponse)
+def website_predict(
 
     price: float = Form(...),
     freight_value: float = Form(...),
@@ -238,14 +298,13 @@ def predict_delay(
 
 ):
 
-    # Dummy feature values
+    # Default values for remaining features
     purchase_hour = 12
     purchase_day = 15
     purchase_month = 7
     purchase_weekday = 2
     is_weekend = 0
 
-    # Feature array
     features = np.array([[
         price,
         freight_value,
@@ -257,12 +316,11 @@ def predict_delay(
         delivery_time_days
     ]])
 
-    # Prediction
     prediction = int(model.predict(features)[0])
 
     probability = float(model.predict_proba(features)[0][1])
 
-    # Risk category
+    # Risk classification
     if probability > 0.7:
         risk = "HIGH RISK"
         color = "#ef4444"
@@ -360,9 +418,9 @@ def predict_delay(
 
     """
 
-# ==============================
+# =========================================
 # RISK ANALYTICS API
-# ==============================
+# =========================================
 
 @app.get("/risk-analytics")
 def risk_analytics():

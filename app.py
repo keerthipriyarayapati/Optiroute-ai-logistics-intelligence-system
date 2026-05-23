@@ -150,6 +150,39 @@ def home():
                 logistics analytics, and intelligent route risk assessment.
             </p>
 
+            <div style="margin-top:50px;">
+
+    <form action="/predict-delay" method="post">
+
+        <input type="number" name="price" placeholder="Product Price"
+        style="padding:12px; width:220px; margin:10px; border-radius:8px; border:none;">
+
+        <input type="number" name="freight_value" placeholder="Freight Value"
+        style="padding:12px; width:220px; margin:10px; border-radius:8px; border:none;">
+
+        <input type="number" name="delivery_time_days" placeholder="Delivery Time Days"
+        style="padding:12px; width:220px; margin:10px; border-radius:8px; border:none;">
+
+        <br>
+
+        <button type="submit"
+        style="
+            margin-top:20px;
+            padding:15px 35px;
+            border:none;
+            border-radius:10px;
+            background-color:#2563eb;
+            color:white;
+            font-size:18px;
+            cursor:pointer;
+        ">
+            Predict Delivery Risk
+        </button>
+
+    </form>
+
+</div>
+
             <div class="buttons">
 
                 <a class="btn" href="/docs">

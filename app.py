@@ -4,16 +4,10 @@ from pydantic import BaseModel
 import joblib
 import numpy as np
 
-# =========================================
 # LOAD ML MODEL
-# =========================================
-
 model = joblib.load("model.pkl")
 
-# =========================================
 # FASTAPI INITIALIZATION
-# =========================================
-
 app = FastAPI(
     title="OptiRoute AI Logistics Intelligence API",
     description="""
@@ -31,10 +25,7 @@ Features:
     }
 )
 
-# =========================================
 # HOME PAGE
-# =========================================
-
 @app.get("/", response_class=HTMLResponse)
 def home():
 
@@ -243,10 +234,7 @@ def home():
 
     """
 
-# =========================================
 # API INPUT SCHEMA
-# =========================================
-
 class DeliveryInput(BaseModel):
 
     price: float
@@ -258,10 +246,7 @@ class DeliveryInput(BaseModel):
     is_weekend: int
     delivery_time_days: float
 
-# =========================================
 # MAIN API PREDICTION ENDPOINT
-# =========================================
-
 @app.post("/predict-delay")
 def predict_delay(data: DeliveryInput):
 
@@ -285,10 +270,7 @@ def predict_delay(data: DeliveryInput):
         "delay_probability": probability
     }
 
-# =========================================
 # WEBSITE PREDICTION PAGE
-# =========================================
-
 @app.post("/website-predict", response_class=HTMLResponse)
 def website_predict(
 
@@ -418,10 +400,7 @@ def website_predict(
 
     """
 
-# =========================================
 # RISK ANALYTICS API
-# =========================================
-
 @app.get("/risk-analytics")
 def risk_analytics():
 
